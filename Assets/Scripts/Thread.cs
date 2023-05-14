@@ -8,6 +8,7 @@ public class Thread : MonoBehaviour {
     [SerializeField] private InputActionReference mousePosRef;
     [SerializeField] private InputActionReference mouseClickRef;
     [SerializeField] private GameObject dataNodePrefab;
+    [SerializeField] private GameObject lockPrefab;
 
     private Transform source;
     private Transform target;
@@ -42,6 +43,11 @@ public class Thread : MonoBehaviour {
 
         if (target != null) {
             lr.SetPosition(lr.positionCount-1, target.position);
+
+            if (transform.childCount == 0 || !transform.GetChild(0).TryGetComponent(out EdgeCollider2D edge)) {
+                GetComponent<EdgeCollider2D>().SetPoints(new List<Vector2>() { transform.InverseTransformPoint(source.position), transform.InverseTransformPoint(target.position) });
+                GetComponent<EdgeCollider2D>().edgeRadius = 0.1f;
+            }
             _updateDataNodePosition();
         } else {
             lr.SetPosition(lr.positionCount-1, mousePos);
@@ -49,10 +55,18 @@ public class Thread : MonoBehaviour {
 
     }
 
+    public void CreateLock(Vector3 pos) {
+        pos = new Vector2(pos.x, transform.position.y);
+        GameObject newLock = Instantiate(lockPrefab, pos, Quaternion.identity, transform);
+    }
+
     private void _updateDataNodePosition() {
-        if (_currTick == timeToCompletion || _currTick == 0) {
-            if (_currDataNode != null) Destroy(_currDataNode);
-            // Put code here for handling target functions
+        if (_currTick >= timeToCompletion || _currTick == 0) {
+            if (_currDataNode != null) {
+                Destroy(_currDataNode);
+                target.GetComponent<Target>().BeginProcessing(_currDataNode);
+            }
+
             _currTick = Time.deltaTime;
             
             _currDataNode = Instantiate(dataNodePrefab, source.position, Quaternion.identity, transform);
@@ -64,12 +78,14 @@ public class Thread : MonoBehaviour {
     }
 
     private void OnRelease(InputAction.CallbackContext ctx) {
-        RaycastHit hit;
+        if (target != null) { return; }
 
-        Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, -10); // Start on -10 so it doesn't start inside the object
-        if (Physics.Raycast(newMousePos, Vector3.forward, out hit)) {
-            if (hit.transform.CompareTag("Interactable")) {
-                target = hit.transform;
+        Vector2 point = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
+        Collider2D col = Physics2D.OverlapPoint(point);
+
+        if (col != null) {
+            if (col.transform.CompareTag("Interactable")) {
+                target = col.transform;
             } else {
                 Destroy(gameObject);
             }

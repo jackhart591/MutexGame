@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1221941721896866866}
   - component: {fileID: 1221941721896866867}
   - component: {fileID: 1221941721896866864}
+  - component: {fileID: 15507278145515697}
   m_Layer: 0
   m_Name: Thread
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221941721896866865}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.3182051, y: 1.4453064, z: -0.048818637}
+  m_LocalPosition: {x: -1.3182051, y: 1.4453064, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -73,7 +74,7 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
@@ -148,3 +149,26 @@ MonoBehaviour:
   mousePosRef: {fileID: -1567240831416202606, guid: eff82135a49ad4a45940901c7173d88b, type: 3}
   mouseClickRef: {fileID: 1206193839797117186, guid: eff82135a49ad4a45940901c7173d88b, type: 3}
   dataNodePrefab: {fileID: 2503965490396199553, guid: 0c27f0921e7875640bd5b75a5abff32d, type: 3}
+  lockPrefab: {fileID: 3705881871704593195, guid: 803764812f31f5244974dffbd379efaf, type: 3}
+--- !u!68 &15507278145515697
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1221941721896866865}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: 0.8182051, y: -0.12453973}
+  - {x: 6.396695, y: -0.12453973}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0

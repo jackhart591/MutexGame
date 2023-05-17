@@ -63,5 +63,6 @@ public class Target : MonoBehaviour {
 
     private void DataCollision() {
         Debug.Log("Game Over!");
+        Application.Quit();
     }
 }

@@ -13,11 +13,14 @@ public class Thread : MonoBehaviour {
     private Transform source;
     private Transform target;
     private float timeToCompletion;
+    private float startOffset;
     private LineRenderer lr;
     private Vector2 mousePos;
     private bool _dataLocked;
     private float _currTick;
     private GameObject _currDataNode;
+
+    public static bool Play = false;
 
     private void Awake() {
         lr = GetComponent<LineRenderer>();
@@ -32,9 +35,10 @@ public class Thread : MonoBehaviour {
         mouseClickRef.action.canceled -= OnRelease;
     }
 
-    public void Initialize(Transform _source, float _timeToCompletion) {
+    public void Initialize(Transform _source, float _timeToCompletion, float _startOffset) {
         source = _source;
         timeToCompletion = _timeToCompletion;
+        startOffset = _startOffset;
     }
 
     private void Update() {
@@ -49,7 +53,11 @@ public class Thread : MonoBehaviour {
                 GetComponent<EdgeCollider2D>().SetPoints(new List<Vector2>() { transform.InverseTransformPoint(source.position), transform.InverseTransformPoint(target.position) });
                 GetComponent<EdgeCollider2D>().edgeRadius = 0.1f;
             }
-            _updateDataNodePosition();
+            
+            if (startOffset <= 0 && Play)
+                _updateDataNodePosition();
+            else if (Play)
+                startOffset -= Time.deltaTime;
         } else {
             lr.SetPosition(lr.positionCount-1, mousePos);
         }

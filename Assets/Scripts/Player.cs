@@ -48,4 +48,7 @@ public class Player : MonoBehaviour {
             selectionCube.localPosition = Vector3.zero;
         }
     }
+
+    public static void OnPlay() { Thread.Play = true; }
+    public static void OnPause() { Thread.Play = false; }
 }

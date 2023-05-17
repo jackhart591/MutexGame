@@ -15,6 +15,7 @@ public class Thread : MonoBehaviour {
     private float timeToCompletion;
     private LineRenderer lr;
     private Vector2 mousePos;
+    private bool _dataLocked;
     private float _currTick;
     private GameObject _currDataNode;
 
@@ -71,6 +72,9 @@ public class Thread : MonoBehaviour {
             
             _currDataNode = Instantiate(dataNodePrefab, source.position, Quaternion.identity, transform);
         } else {
+
+            if (_dataLocked) return;
+
             Vector3 newPos = Vector3.Lerp(source.position, target.position, _currTick/timeToCompletion);
             _currDataNode.transform.position = newPos;
             _currTick += Time.deltaTime;
@@ -91,4 +95,8 @@ public class Thread : MonoBehaviour {
             }
         }
     }
+
+    public void InLock() { _dataLocked = true; }
+
+    public void LeftLock() { _dataLocked = false; }
 }

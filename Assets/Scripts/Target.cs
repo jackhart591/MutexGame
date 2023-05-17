@@ -9,11 +9,13 @@ public class Target : MonoBehaviour {
         private set {
             _isProcessing = value;
             GetComponent<SpriteRenderer>().color = (_isProcessing) ? Color.red : Color.blue;
+            InvokeListeners(value);
         }
     }
 
     [SerializeField] private float processingTime;
 
+    private LockVariable linkedLockVar;
     private float _currProcessTime;
     private bool _isProcessing;
 
@@ -34,6 +36,16 @@ public class Target : MonoBehaviour {
             }
         }
     }
+
+    public void SetListener(LockVariable lockVar) {
+        linkedLockVar = lockVar;
+    }
+
+    public void RemoveListener() {
+        linkedLockVar = null;
+    }
+
+    private void InvokeListeners(bool val) { if (linkedLockVar != null) linkedLockVar.ToggleLock(val); }
 
     public void BeginProcessing(GameObject dataNode) {
         if (isProcessing) { 

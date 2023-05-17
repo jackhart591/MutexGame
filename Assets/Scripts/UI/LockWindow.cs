@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System;
 
 public class LockWindow : MonoBehaviour {
 
@@ -19,6 +20,21 @@ public class LockWindow : MonoBehaviour {
         newVar.GetComponentInChildren<Text>().text = $"Lock Variable {VariableArea.childCount}";
     }
 
+    public void RemoveVar() {
+
+        if (currSelectedLockVar == null) {
+            currSelectedLockVar = VariableArea.GetChild(VariableArea.childCount-1).GetComponent<LockVariable>();
+        }
+
+        currSelectedLockVar.GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
+
+        if (currSelectedLockVar.linkedTarget != null)
+            currSelectedLockVar.linkedTarget.RemoveListener();
+
+        Destroy(currSelectedLockVar.gameObject);
+        currSelectedLockVar = null;
+    }
+
     public void SelectVar(Toggle toggledGameObject) {
 
         bool isOn = toggledGameObject.isOn;
@@ -31,11 +47,27 @@ public class LockWindow : MonoBehaviour {
         currSelectedLockVar = (isOn) ? toggledGameObject.GetComponent<LockVariable>() : null;
     }
 
-    public void ApplyToLock() {
-        Lock currLock = player.currSelectedLock;
-        currLock.currentLockVar.OnToggleLock.RemoveListener(currLock.OnToggleLock);
+    public void LinkVar() {
+        if (player.currSelectedInteractable.TryGetComponent(out Target target)) {
+            target.SetListener(currSelectedLockVar.GetComponent<LockVariable>());
+        } else { Debug.LogWarning("No Target Selected!!"); }
+    }
 
-        if (currSelectedLockVar != null)
-            currSelectedLockVar.OnToggleLock.AddListener(currLock.OnToggleLock);
+    public void ApplyToLock() {
+        if (player.currSelectedInteractable == null) {
+            Debug.LogWarning("Nothing selected!!");
+            return;
+        }
+
+        if (player.currSelectedInteractable.TryGetComponent(out Lock currLock)) {
+            if (currSelectedLockVar != null) {
+                try {
+                    currLock.currentLockVar.toggleLock -= currLock.OnToggleLock;
+                } catch (Exception _) {}
+
+                currSelectedLockVar.toggleLock += currLock.OnToggleLock;
+            }
+        } else { Debug.LogWarning("No Lock Selected!!"); }
+
     }
 }

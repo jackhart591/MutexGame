@@ -8,7 +8,23 @@ public class Lock : MonoBehaviour {
 
     [HideInInspector] public LockVariable currentLockVar;
 
-    public void OnToggleLock() {
-        locked = !locked;
+    private Thread lockedObj;
+
+    private void Update() {
+        if (lockedObj != null && !locked) {
+            lockedObj.LeftLock();
+            lockedObj = null;
+        }
+    }
+
+    public void OnToggleLock(bool _locked) {
+        locked = _locked;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.transform.CompareTag("Data") && locked) {
+            lockedObj = transform.GetComponentInParent<Thread>();
+            lockedObj.InLock();
+        }
     }
 }

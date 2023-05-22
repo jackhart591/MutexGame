@@ -73,7 +73,7 @@ public class Thread : MonoBehaviour {
         if (_currTick >= timeToCompletion || _currTick == 0) {
             if (_currDataNode != null) {
                 Destroy(_currDataNode);
-                target.GetComponent<Target>().BeginProcessing(_currDataNode);
+                //target.GetComponent<Target>().BeginProcessing(_currDataNode);
             }
 
             _currTick = Time.deltaTime;

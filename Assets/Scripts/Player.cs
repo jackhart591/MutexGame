@@ -21,14 +21,14 @@ public class Player : MonoBehaviour {
         Collider2D col = Physics2D.OverlapPoint(point);
 
         if (col != null) {
-            if (col.transform.TryGetComponent(out Source _source)) {
+            /*if (col.transform.TryGetComponent(out Source _source)) {
                 _source.CreateThread();
                 OnInteract(col.transform);
             } else if (col.transform.TryGetComponent(out Thread _thread)) {
                 _thread.CreateLock(point);
             } else if (col.transform.CompareTag("Interactable")) {
                 OnInteract(col.transform);
-            }
+            }*/
         } /* else { OnInteract(); } */
     }
 

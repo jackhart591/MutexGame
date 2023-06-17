@@ -31,7 +31,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 960448395573916421}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -240,8 +240,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 960448395270821637}
   - {fileID: 960448395700137270}
+  - {fileID: 960448395270821637}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -264,6 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TitleText: {fileID: 960448395270821658}
   colorObj: {fileID: 960448395546645642}
+  threadPrefab: {fileID: 1221941721896866865, guid: f5eb111fbb12c0a49bbd62add5810adb, type: 3}
 --- !u!1 &960448395700137265
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +298,7 @@ RectTransform:
   m_Children:
   - {fileID: 960448395546645621}
   m_Father: {fileID: 960448395573916421}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

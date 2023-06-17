@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Variable))]
 public class VariableUI : MonoBehaviour {
     
-    [SerializeField] private VariableColor color;
+    public VariableColor color { get; private set; }
 
     public void Start() {
         transform.GetChild(0).GetComponent<Image>().color = (Color)ProgramWindow.GetColorFromEnum(color);
@@ -13,6 +15,8 @@ public class VariableUI : MonoBehaviour {
 
     public void LinkThreadToVar(ThreadUI thread) {
         if (!ThreadCanLink(thread)) { return; }
+
+        //thread.LinkThreadToVar(GetComponent<Variable>());
 
         // Do stuff in gameplay layer
     }

@@ -1,54 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
-
-    [HideInInspector] public Transform currSelectedInteractable { get; private set; }
+    
+    [HideInInspector] public ThreadUI currSelectedThread;
 
     [SerializeField] private InputActionReference mousePosRef;
-    [SerializeField] private Transform selectionCube;
+    [SerializeField] private InputActionReference mouseClickRef;
 
-    private Vector3 defaultSelectionCubePos;
+    [Tooltip("Main canvas object that is present in the scene")]
+    [SerializeField] private GraphicRaycaster sceneCanvas;
+    [SerializeField] private EventSystem eventSystem;
 
     private void Start() {
-        defaultSelectionCubePos = selectionCube.transform.position;
+        currSelectedThread = null;
+
+        mouseClickRef.action.canceled += OnMouseUp;
     }
 
-    private void OnMouseClick() {
-        Vector2 point = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
-        Collider2D col = Physics2D.OverlapPoint(point);
-
-        if (col != null) {
-            /*if (col.transform.TryGetComponent(out Source _source)) {
-                _source.CreateThread();
-                OnInteract(col.transform);
-            } else if (col.transform.TryGetComponent(out Thread _thread)) {
-                _thread.CreateLock(point);
-            } else if (col.transform.CompareTag("Interactable")) {
-                OnInteract(col.transform);
-            }*/
-        } /* else { OnInteract(); } */
+    private void OnDestroy() {
+        mouseClickRef.action.canceled -= OnMouseUp;
     }
 
-    private void OnInteract(Transform obj=null) {
+    private void OnMouseUp(InputAction.CallbackContext ctx) {
+        Vector2 point = mousePosRef.action.ReadValue<Vector2>();
 
-        if (obj == null) {
-            currSelectedInteractable = null;
-            selectionCube.SetParent(null);
-            selectionCube.position = defaultSelectionCubePos;
-            return;
+        var uiClicked = _getUIClicked(point);
+
+        VariableUI varScript = null;
+        if (uiClicked != null) {
+            foreach (GameObject elem in uiClicked) {
+                if (currSelectedThread != null) {
+                    varScript = elem.GetComponent<VariableUI>();
+                }
+            }
         }
 
-        if (obj.CompareTag("Interactable")) {
-            currSelectedInteractable = obj;
-
-            selectionCube.SetParent(currSelectedInteractable);
-            selectionCube.localPosition = Vector3.zero;
-        }
+        // if varScript doesn't exist, it will delete the line renderer
+        currSelectedThread.LinkThreadToVar(varScript);
     }
 
     public static void OnPlay() { Thread.Play = true; }
     public static void OnPause() { Thread.Play = false; }
+
+    private List<GameObject> _getUIClicked(Vector3 screenpoint) {
+        var _pointerEventData = new PointerEventData(eventSystem);
+        _pointerEventData.position = screenpoint;
+        var results = new List<RaycastResult>();
+
+        sceneCanvas.Raycast(_pointerEventData, results);
+
+        // Won't every gameobject in results be a UI object?
+        List<GameObject> UIElementsClicked = new List<GameObject>();
+        foreach(RaycastResult result in results) {
+            if (result.gameObject.layer == 5) { // Is on UI Layer
+                UIElementsClicked.Add(result.gameObject);
+            }
+        }
+
+        return (UIElementsClicked.Count > 0) ? UIElementsClicked : null;
+    }
 }

@@ -13,6 +13,7 @@ public class ProgramWindow : MonoBehaviour {
     public VariableColor[] threads;
 
     [Header("References -- Don't change!!")]
+    [SerializeField] private Player player;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform threadParent;
     [SerializeField] private GameObject threadPrefab;
@@ -37,6 +38,7 @@ public class ProgramWindow : MonoBehaviour {
 
             script.Title = $"Thread #{i+1}";
             script.color = (Color)GetColorFromEnum(threads[i]);
+            script.player = player;
         }
     }
 

@@ -42,7 +42,7 @@ public class Thread : MonoBehaviour {
     }
 
     private void Update() {
-        mousePos = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
+        /*mousePos = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
 
         lr.SetPosition(0, source.position);
 
@@ -60,7 +60,7 @@ public class Thread : MonoBehaviour {
                 startOffset -= Time.deltaTime;
         } else {
             lr.SetPosition(lr.positionCount-1, mousePos);
-        }
+        }*/
 
     }
 

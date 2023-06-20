@@ -220,7 +220,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 960448395573916421}
-  - component: {fileID: 50092065097032138}
   m_Layer: 0
   m_Name: Thread
   m_TagString: Untagged
@@ -250,21 +249,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.0024109, y: -70.116}
   m_SizeDelta: {x: 389.7, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &50092065097032138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960448395573916420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3dd0cc7b55803946941a7757137b9f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TitleText: {fileID: 960448395270821658}
-  colorObj: {fileID: 960448395546645642}
-  threadPrefab: {fileID: 1221941721896866865, guid: f5eb111fbb12c0a49bbd62add5810adb, type: 3}
 --- !u!1 &960448395700137265
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,6 +261,7 @@ GameObject:
   - component: {fileID: 960448395700137268}
   - component: {fileID: 960448395700137271}
   - component: {fileID: 4498662100965184249}
+  - component: {fileID: 2435337558674970058}
   m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
@@ -364,3 +349,19 @@ MonoBehaviour:
   endDragCallback:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2435337558674970058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960448395700137265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3dd0cc7b55803946941a7757137b9f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  TitleText: {fileID: 960448395270821658}
+  colorObj: {fileID: 960448395546645642}
+  threadPrefab: {fileID: 1221941721896866865, guid: f5eb111fbb12c0a49bbd62add5810adb, type: 3}

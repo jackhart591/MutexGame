@@ -20,16 +20,33 @@ public class Player : MonoBehaviour {
         currSelectedThread = null;
 
         mouseClickRef.action.canceled += OnMouseUp;
+        mouseClickRef.action.performed += OnMouseDown;
     }
 
     private void OnDestroy() {
         mouseClickRef.action.canceled -= OnMouseUp;
+        mouseClickRef.action.performed -= OnMouseDown;
+    }
+
+    private void OnMouseDown(InputAction.CallbackContext ctx) {
+        var uiClicked = _getUIClicked();
+        if (uiClicked != null) { return; } // UI Handles its own click stuff
+
+        RaycastHit2D hit;
+        Ray ray = Camera.main.ScreenPointToRay(mousePosRef.action.ReadValue<Vector2>());
+        hit = Physics2D.Raycast(Camera.main.transform.position, mousePosRef.action.ReadValue<Vector2>());
+
+        if (hit.collider == null) { return; }
+
+        switch (hit.transform.tag) {
+            case "Thread":
+                hit.transform.GetComponent<Thread>().CreateLock();
+                break;
+        }
     }
 
     private void OnMouseUp(InputAction.CallbackContext ctx) {
-        Vector2 point = mousePosRef.action.ReadValue<Vector2>();
-
-        var uiClicked = _getUIClicked(point);
+        var uiClicked = _getUIClicked();
 
         VariableUI varScript = null;
         if (uiClicked != null) {
@@ -41,15 +58,15 @@ public class Player : MonoBehaviour {
         }
 
         // if varScript doesn't exist, it will delete the line renderer
-        currSelectedThread.LinkThreadToVar(varScript);
+        if (currSelectedThread != null) currSelectedThread.LinkThreadToVar(varScript);
     }
 
     public static void OnPlay() { Thread.Play = true; }
     public static void OnPause() { Thread.Play = false; }
 
-    private List<GameObject> _getUIClicked(Vector3 screenpoint) {
+    private List<GameObject> _getUIClicked() {
         var _pointerEventData = new PointerEventData(eventSystem);
-        _pointerEventData.position = screenpoint;
+        _pointerEventData.position = mousePosRef.action.ReadValue<Vector2>();
         var results = new List<RaycastResult>();
 
         sceneCanvas.Raycast(_pointerEventData, results);

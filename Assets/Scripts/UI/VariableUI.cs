@@ -5,12 +5,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Variable))]
-public class VariableUI : MonoBehaviour {
+public class VariableUI : InteractableUI {
     
-    public VariableColor color { get; private set; }
-
     public void Start() {
-        transform.GetChild(0).GetComponent<Image>().color = (Color)ProgramWindow.GetColorFromEnum(color);
+        transform.GetChild(0).GetComponent<Image>().color = (Color)VariableColorManager.GetColorFromEnum(color);
     }
 
     public void LinkThreadToVar(ThreadUI thread) {
@@ -22,7 +20,7 @@ public class VariableUI : MonoBehaviour {
     }
 
     public bool ThreadCanLink(ThreadUI thread) {
-        if (thread.color == (Color)ProgramWindow.GetColorFromEnum(color)) {
+        if (thread.color == color) {
             return true;
         } else { return false; }
     }

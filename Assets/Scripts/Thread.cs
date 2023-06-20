@@ -12,6 +12,7 @@ public class Thread : MonoBehaviour {
 
     private Transform source;
     private Transform target;
+    private VariableColor color;
     private float timeToCompletion;
     private float startOffset;
     private LineRenderer lr;
@@ -27,30 +28,26 @@ public class Thread : MonoBehaviour {
         lr.positionCount = 2;
         target = null;
         _currTick = 0;
-
-        mouseClickRef.action.canceled += OnRelease;
     }
 
-    private void Destroy() {
-        mouseClickRef.action.canceled -= OnRelease;
-    }
+    public void Initialize(ThreadUI _source) {
+        mousePos = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
+        SetSource(_source);
 
-    public void Initialize(Transform _source, float _timeToCompletion, float _startOffset) {
-        source = _source;
-        timeToCompletion = _timeToCompletion;
-        startOffset = _startOffset;
+        lr.SetPosition(0, source.GetComponent<ThreadUI>().WorldPos);
+        lr.SetPosition(lr.positionCount-1, mousePos);
     }
 
     private void Update() {
-        /*mousePos = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
+        mousePos = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
 
-        lr.SetPosition(0, source.position);
+        lr.SetPosition(0, source.GetComponent<ThreadUI>().WorldPos);
 
         if (target != null) {
-            lr.SetPosition(lr.positionCount-1, target.position);
+            lr.SetPosition(lr.positionCount-1, target.GetComponent<VariableUI>().WorldPos);
 
             if (transform.childCount == 0 || !transform.GetChild(0).TryGetComponent(out EdgeCollider2D edge)) {
-                GetComponent<EdgeCollider2D>().SetPoints(new List<Vector2>() { transform.InverseTransformPoint(source.position), transform.InverseTransformPoint(target.position) });
+                GetComponent<EdgeCollider2D>().SetPoints(new List<Vector2>() { transform.InverseTransformPoint(lr.GetPosition(0)), transform.InverseTransformPoint(lr.GetPosition(lr.positionCount-1)) });
                 GetComponent<EdgeCollider2D>().edgeRadius = 0.1f;
             }
             
@@ -60,13 +57,12 @@ public class Thread : MonoBehaviour {
                 startOffset -= Time.deltaTime;
         } else {
             lr.SetPosition(lr.positionCount-1, mousePos);
-        }*/
+        }
 
     }
 
-    public void CreateLock(Vector3 pos) {
-        pos = new Vector2(pos.x, transform.position.y);
-        GameObject newLock = Instantiate(lockPrefab, pos, Quaternion.identity, transform);
+    public void CreateLock() {
+        GameObject newLock = Instantiate(lockPrefab, Vector3.zero, Quaternion.identity, transform);
     }
 
     private void _updateDataNodePosition() {
@@ -89,19 +85,28 @@ public class Thread : MonoBehaviour {
         }
     }
 
-    private void OnRelease(InputAction.CallbackContext ctx) {
-        if (target != null) { return; }
+    public void SetSource(ThreadUI thread) {
+        source = thread.transform;
+        SetColor(thread.color);
+    }
 
-        Vector2 point = Camera.main.ScreenToWorldPoint(mousePosRef.action.ReadValue<Vector2>());
-        Collider2D col = Physics2D.OverlapPoint(point);
-
-        if (col != null) {
-            if (col.transform.CompareTag("Interactable")) {
-                target = col.transform;
-            } else {
-                Destroy(gameObject);
-            }
+    public bool SetTarget(Variable @var) {
+        if (color == var.color) {
+            target = var.transform;
+            return true;
         }
+
+        return false;
+    }
+
+    public void SetColor(Color col) {
+        var newCol = VariableColorManager.GetEnumFromColor(col);
+
+        if (newCol != null) { color = (VariableColor)newCol; }
+    }
+
+    public void SetColor(VariableColor col) {
+        color = col;
     }
 
     public void InLock() { _dataLocked = true; }

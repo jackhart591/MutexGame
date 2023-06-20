@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Interactable
   - Data
+  - Thread
   layers:
   - Default
   - TransparentFX

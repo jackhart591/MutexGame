@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class ThreadUI : MonoBehaviour {
+public class ThreadUI : InteractableUI {
 
     public string Title {
         get {
@@ -16,15 +16,6 @@ public class ThreadUI : MonoBehaviour {
             TitleText.text = value;
         }
     }
-    public Color color {
-        get {
-            return colorObj.color;
-        }
-
-        set {
-            colorObj.color = value;
-        }
-    }
 
     [HideInInspector] public Player player; // Set by the ProgramWindow script
 
@@ -33,12 +24,12 @@ public class ThreadUI : MonoBehaviour {
     [SerializeField] private Image colorObj;
     [SerializeField] private GameObject threadPrefab;
 
-    private LineRenderer currentlyHeldThread;
+    private Thread currentlyHeldThread;
 
     private void Awake() {
-        colorObj.GetComponentInParent<ThreadClickDetector>().beginDragCallback.AddListener(OnBeginDrag);
-        colorObj.GetComponentInParent<ThreadClickDetector>().dragCallback.AddListener(OnDrag);
-        colorObj.GetComponentInParent<ThreadClickDetector>().endDragCallback.AddListener(OnEndDrag);
+        GetComponent<ThreadClickDetector>().beginDragCallback.AddListener(OnBeginDrag);
+        //colorObj.GetComponentInParent<ThreadClickDetector>().dragCallback.AddListener(OnDrag);
+        GetComponent<ThreadClickDetector>().endDragCallback.AddListener(OnEndDrag);
 
         currentlyHeldThread = null;
     }
@@ -47,37 +38,41 @@ public class ThreadUI : MonoBehaviour {
 
         if (currentlyHeldThread == null) { return; }
 
-        if (var == null || ProgramWindow.GetColorFromEnum(var.color) != color) {
+        if (var == null) {
             Destroy(currentlyHeldThread.gameObject);
         } else {
             Vector3 newPos = Camera.main.ScreenToWorldPoint(var.transform.position);
             newPos = new Vector3(newPos.x, newPos.y, 0);
 
-            currentlyHeldThread.SetPosition(currentlyHeldThread.positionCount-1, newPos);
+            Variable varScript = var.GetComponent<Variable>();
+            if(!currentlyHeldThread.GetComponent<Thread>().SetTarget(varScript)) {
+                Destroy(var.gameObject);
+            }
+        }
+    }
+
+    public void SetColor(VariableColor col) {
+        color = col;
+        colorObj.color = (Color)VariableColorManager.GetColorFromEnum(col);
+    }
+
+    public void SetColor(Color col) {
+        var newCol = VariableColorManager.GetEnumFromColor(col);
+
+        if (newCol != null) { 
+            color = (VariableColor)newCol; 
+            colorObj.color = col;
         }
     }
 
     private void OnBeginDrag(Vector2 mousePos) {
         GameObject newThread = Instantiate(threadPrefab);
-        currentlyHeldThread = newThread.GetComponent<LineRenderer>();
+        currentlyHeldThread = newThread.GetComponentInChildren<Thread>();
         player.currSelectedThread = this;
-
-        Vector3 threadPos = Camera.main.ScreenToWorldPoint(transform.GetChild(0).position);
-        threadPos = new Vector3(threadPos.x, threadPos.y, 0);
-
-        currentlyHeldThread.SetPosition(0, threadPos);
-    }
-
-    private void OnDrag(Vector2 mousePos) {
-        Vector3 newMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        newMousePos = new Vector3(newMousePos.x, newMousePos.y, 0);
-        currentlyHeldThread.SetPosition(1, newMousePos);
+        currentlyHeldThread.Initialize(this);
     }
 
     private void OnEndDrag(Vector2 mousePos) {
-        Vector3 newMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        newMousePos = new Vector3(newMousePos.x, newMousePos.y, 0);
-
         currentlyHeldThread = null;
     }
 }

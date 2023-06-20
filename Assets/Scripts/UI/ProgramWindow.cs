@@ -4,11 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum VariableColor { Blue, Red, Green, Yellow };
-
 public class ProgramWindow : MonoBehaviour {
-
-
     public string Title;
     public VariableColor[] threads;
 
@@ -34,27 +30,11 @@ public class ProgramWindow : MonoBehaviour {
     
         for (int i = 0; i < threads.Length; i++) {
             GameObject newThread = Instantiate(threadPrefab, Vector3.zero, Quaternion.identity, threadParent);
-            ThreadUI script = newThread.GetComponent<ThreadUI>();
+            ThreadUI script = newThread.GetComponentInChildren<ThreadUI>();
 
             script.Title = $"Thread #{i+1}";
-            script.color = (Color)GetColorFromEnum(threads[i]);
+            script.SetColor(threads[i]);
             script.player = player;
-        }
-    }
-
-    public static Color? GetColorFromEnum(VariableColor col) {
-        switch (col) {
-            case VariableColor.Blue:
-                return Color.blue;
-            case VariableColor.Red:
-                return Color.red;
-            case VariableColor.Green:
-                return Color.green;
-            case VariableColor.Yellow:
-                return Color.yellow;
-            default:
-                Debug.LogError("Color not implemented!!");
-                return null;
         }
     }
 }

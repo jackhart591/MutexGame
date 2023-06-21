@@ -10,6 +10,7 @@ public class Thread : MonoBehaviour {
     [SerializeField] private GameObject dataNodePrefab;
     [SerializeField] private GameObject lockPrefab;
 
+    private List<Lock> locks;
     private Transform source;
     private Transform target;
     private VariableColor color;
@@ -24,6 +25,7 @@ public class Thread : MonoBehaviour {
     public static bool Play = false;
 
     private void Awake() {
+        locks = new List<Lock>();
         lr = GetComponent<LineRenderer>();
         lr.positionCount = 2;
         target = null;
@@ -63,6 +65,54 @@ public class Thread : MonoBehaviour {
 
     public void CreateLock() {
         GameObject newLock = Instantiate(lockPrefab, Vector3.zero, Quaternion.identity, transform);
+        locks.Add(newLock.GetComponent<Lock>());
+        _updateLockPositions();
+        _updateLineColor();
+    }
+
+    public void RemoveLock(Lock @lock) {
+        locks.Remove(@lock);
+        Destroy(@lock.gameObject);
+        _updateLockPositions();
+        _updateLineColor();
+    }
+
+    private void _updateLockPositions() {
+
+        // Get two positions of line renderer
+        var lPos = lr.GetPosition(0);
+        var rPos = lr.GetPosition(lr.positionCount-1);
+
+        for (int i = 0; i < locks.Count; i++) {
+            locks[i].transform.position = Vector3.Lerp(lPos, rPos, ((float)i+1) / ((float)locks.Count+1));
+        }
+    }
+
+    // TODO: Change this to use color information in textures instead
+    //       or if that's too hard, use a bunch of gradients positions (maybe 100?)
+    private void _updateLineColor() {
+        var gradient = new Gradient();
+
+        var colorKey = new GradientColorKey[locks.Count + 1];
+        var alphaKey = new GradientAlphaKey[locks.Count + 1];
+        colorKey[0].color = Color.white;
+        colorKey[0].time = 0.0f;
+        alphaKey[0].alpha = 1.0f;
+        alphaKey[0].time = 0.0f;
+
+        for (int i = 0; i < locks.Count; i++) {
+            var time = ((float)i+1) / ((float)locks.Count+1);
+            colorKey[i+1].color = (locks[i].IsLocked) ? Color.red : Color.white;
+            colorKey[i+1].time = time;
+            alphaKey[i+1].alpha = 1.0f;
+            alphaKey[i+1].time = time;
+        }
+
+        gradient.SetKeys(colorKey, alphaKey);
+        gradient.mode = GradientMode.Fixed;
+
+        lr.colorGradient = gradient;
+        Debug.Log("here!");
     }
 
     private void _updateDataNodePosition() {
